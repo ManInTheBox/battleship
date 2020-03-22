@@ -1,3 +1,6 @@
 <div class="phx-hero">
   <h2>Game home page</h2>
+
+  <div id="messages"></div>
+  <input id="chat-input" type="text"></input>
 </div>
