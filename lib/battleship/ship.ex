@@ -1,4 +1,4 @@
-defmodule Battleship.Piece do
+defmodule Battleship.Ship do
   def new(square), do: do_create([square])
   def new(square1, square2), do: do_create([square1, square2])
   def new(square1, square2, square3), do: do_create([square1, square2, square3])
