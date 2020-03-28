@@ -17,11 +17,11 @@ defmodule Battleship.PieceTest do
     assert [{7, 10}, {8, 10}, {9, 10}, {10, 10}] = Battleship.Piece.new({10, 10}, {7, 10}, {8, 10}, {9, 10})
   end
 
-  test "errors when duplicate fields are provided" do
-    assert {:error, :not_unique_fields} = Battleship.Piece.new({1, 1}, {1, 1})
+  test "errors when duplicate squares are provided" do
+    assert {:error, :not_unique_squares} = Battleship.Piece.new({1, 1}, {1, 1})
   end
 
-  test "errors when fields are not properly aligned" do
+  test "errors when squares are not properly aligned" do
     assert {:error, :not_siblings} = Battleship.Piece.new({1, 1}, {10, 1})
   end
 end
