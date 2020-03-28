@@ -1,5 +1,5 @@
 defmodule Battleship.Square do
-  @matrix 1..10
+  @grid Battleship.Grid.dimensions
 
-  def new({x, y}) when x in @matrix and y in @matrix, do: {x, y}
+  def new({x, y}) when x in @grid and y in @grid, do: {x, y}
 end
