@@ -4,6 +4,7 @@ defmodule BattleshipWeb.RoomChannel do
   def join("room:lobby", _message, socket) do
     {:ok, socket}
   end
+
   def join("room:" <> _private_room_id, _params, socket) do
     {:error, %{reason: "unauthorized"}}
   end

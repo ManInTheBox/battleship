@@ -1,7 +1,7 @@
 defmodule Battleship.FieldTest do
-  use ExUnit.Case, async: false
+  use ExUnit.Case, async: true
 
   test "creates a new field" do
-    assert {:A, 5} == Battleship.Field.new(:A, 5)
+    assert {1, 5} == Battleship.Field.new({1, 5})
   end
 end
