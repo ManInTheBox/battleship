@@ -1,15 +1,21 @@
 defmodule Battleship.Ship do
-  def new(square), do: do_create([square])
-  def new(square1, square2), do: do_create([square1, square2])
-  def new(square1, square2, square3), do: do_create([square1, square2, square3])
-  def new(square1, square2, square3, square4), do: do_create([square1, square2, square3, square4])
+  defstruct squares: [], name: nil
 
-  def name(_), do: "Submarine"
-  def name(_, _), do: "Destroyer"
-  def name(_, _, _), do: "Cruiser"
-  def name(_, _, _, _), do: "Battleship"
+  def new(square), do: do_create([square], "Submarine")
+  def new(square1, square2), do: do_create([square1, square2], "Destroyer")
+  def new(square1, square2, square3), do: do_create([square1, square2, square3], "Cruiser")
+  def new(square1, square2, square3, square4), do: do_create([square1, square2, square3, square4], "Battleship")
 
-  defp do_create(squares) when is_list(squares) do
+  defp do_create(squares, name) when is_list(squares) and is_binary(name) do
+    case validate_squares(squares) do
+      {:ok, squares} ->
+        %Battleship.Ship{squares: squares, name: name}
+      {:error, reason} ->
+        {:error, reason}
+    end
+  end
+
+  defp validate_squares(squares) do
     squares =
       squares
       |> Enum.map(fn square -> Battleship.Square.new(square) end)
@@ -23,7 +29,7 @@ defmodule Battleship.Ship do
         {:error, :not_siblings}
 
       true ->
-        squares
+        {:ok, squares}
     end
   end
 
