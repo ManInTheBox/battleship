@@ -1,15 +1,15 @@
 defmodule Battleship.Ship do
-  defstruct squares: [], name: nil
+  defstruct squares: [], type: nil
 
-  def new(square), do: do_create([square], "Submarine")
-  def new(square1, square2), do: do_create([square1, square2], "Destroyer")
-  def new(square1, square2, square3), do: do_create([square1, square2, square3], "Cruiser")
-  def new(square1, square2, square3, square4), do: do_create([square1, square2, square3, square4], "Battleship")
+  def new(square), do: do_create([square], :submarine)
+  def new(square1, square2), do: do_create([square1, square2], :destroyer)
+  def new(square1, square2, square3), do: do_create([square1, square2, square3], :cruiser)
+  def new(square1, square2, square3, square4), do: do_create([square1, square2, square3, square4], :battleship)
 
-  defp do_create(squares, name) when is_list(squares) and is_binary(name) do
+  defp do_create(squares, type) when is_list(squares) and is_atom(type) do
     case validate_squares(squares) do
       {:ok, squares} ->
-        %Battleship.Ship{squares: squares, name: name}
+        %Battleship.Ship{squares: squares, type: type}
       {:error, reason} ->
         {:error, reason}
     end
