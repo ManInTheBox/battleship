@@ -7,7 +7,8 @@ defmodule Battleship.Grid do
 
   def add_ship(grid, ship) do
     with {:ok} <- assert_ships_not_arranged(grid, ship),
-         {:ok} <- assert_ships_not_overlap(grid, ship) do
+         {:ok} <- assert_ships_not_overlap(grid, ship),
+         {:ok} <- assert_ships_not_touching(grid, ship) do
       do_add_ship(grid, ship)
     end
   end
@@ -49,6 +50,37 @@ defmodule Battleship.Grid do
 
       _ ->
         {:ok}
+    end
+  end
+
+  defp assert_ships_not_touching(grid, ship) do
+    new_ship = Tuple.to_list(ship)
+
+    is_touching =
+      Enum.any?(grid, fn existing_ship ->
+        Enum.any?(Tuple.to_list(existing_ship), fn square ->
+          square = elem(square, 0)
+          {x, y} = square
+
+          not_allowed_squares = [
+            {x + 1, y},
+            {x - 1, y},
+            {x, y + 1},
+            {x, y - 1},
+            {x + 1, y + 1},
+            {x + 1, y - 1},
+            {x - 1, y + 1},
+            {x - 1, y - 1}
+          ]
+
+          Enum.any?(new_ship, fn new_square -> new_square in not_allowed_squares end)
+        end)
+      end)
+
+    if is_touching do
+      {:error, :ships_touching_each_other, ship}
+    else
+      {:ok}
     end
   end
 
