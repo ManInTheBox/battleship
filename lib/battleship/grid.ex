@@ -47,28 +47,20 @@ defmodule Battleship.Grid do
   end
 
   defp assert_ships_not_touching(grid, ship) do
-    new_ship = Tuple.to_list(ship)
+    is_touching = assert_ship_position(grid, ship, fn {x, y}, new_ship ->
+      not_allowed_squares = [
+        {x + 1, y},
+        {x - 1, y},
+        {x, y + 1},
+        {x, y - 1},
+        {x + 1, y + 1},
+        {x + 1, y - 1},
+        {x - 1, y + 1},
+        {x - 1, y - 1}
+      ]
 
-    is_touching =
-      Enum.any?(grid, fn existing_ship ->
-        Enum.any?(Tuple.to_list(existing_ship), fn square ->
-          square = elem(square, 0)
-          {x, y} = square
-
-          not_allowed_squares = [
-            {x + 1, y},
-            {x - 1, y},
-            {x, y + 1},
-            {x, y - 1},
-            {x + 1, y + 1},
-            {x + 1, y - 1},
-            {x - 1, y + 1},
-            {x - 1, y - 1}
-          ]
-
-          Enum.any?(new_ship, fn new_square -> new_square in not_allowed_squares end)
-        end)
-      end)
+      Enum.any?(new_ship, fn new_square -> new_square in not_allowed_squares end)
+    end)
 
     if is_touching do
       {:error, :ships_touching_each_other, ship}
