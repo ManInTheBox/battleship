@@ -8,8 +8,18 @@ defmodule Battleship.Grid do
   def add_ship(grid, ship) do
     with {:ok} <- assert_all_ships_arranged(grid, ship),
          {:ok} <- assert_ship_overlap(grid, ship) do
-      [ship | grid]
+      do_add_ship(grid, ship)
     end
+  end
+
+  defp do_add_ship(grid, ship) do
+    ship =
+      ship
+      |> Tuple.to_list()
+      |> Enum.map(fn square -> {square, :alive} end)
+      |> List.to_tuple()
+
+    [ship | grid]
   end
 
   defp assert_all_ships_arranged(grid, ship) do
@@ -25,6 +35,7 @@ defmodule Battleship.Grid do
 
   defp assert_ship_overlap(grid, ship) do
     new_ship = Tuple.to_list(ship)
+
     already_exists =
       Enum.any?(grid, fn existing_ship ->
         Enum.any?(Tuple.to_list(existing_ship), fn square ->
@@ -35,6 +46,7 @@ defmodule Battleship.Grid do
     case already_exists do
       true ->
         {:error, :ships_overlap, ship}
+
       _ ->
         {:ok}
     end
@@ -44,12 +56,16 @@ defmodule Battleship.Grid do
     case tuple_size(ship) do
       1 ->
         :submarine
+
       2 ->
         :destroyer
+
       3 ->
         :cruiser
+
       4 ->
         :battleship
+
       _ ->
         {:error, :unknown_ship_type}
     end
