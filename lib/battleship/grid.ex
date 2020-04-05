@@ -44,12 +44,10 @@ defmodule Battleship.Grid do
         end)
       end)
 
-    case already_exists do
-      true ->
-        {:error, :ships_overlap, ship}
-
-      _ ->
-        {:ok}
+    if already_exists do
+      {:error, :ships_overlap, ship}
+    else
+      {:ok}
     end
   end
 
