@@ -6,7 +6,20 @@ defmodule Battleship.Grid do
   def new, do: []
 
   def add_ship(grid, ship) do
-    ship_type(ship)
+    with {:ok} <- assert_all_ships_arranged(grid, ship) do
+      [ship | grid]
+    end
+  end
+
+  defp assert_all_ships_arranged(grid, ship) do
+    type = ship_type(ship)
+    ships = Enum.filter(grid, fn ship -> ship_type(ship) == type end)
+
+    if length(ships) >= @ship_count[type] do
+      {:error, :all_ships_arranged, type}
+    else
+      {:ok}
+    end
   end
 
   defp ship_type(ship) when is_tuple(ship) do
