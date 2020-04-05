@@ -35,14 +35,9 @@ defmodule Battleship.Grid do
   end
 
   defp assert_ships_not_overlap(grid, ship) do
-    new_ship = Tuple.to_list(ship)
-
-    already_exists =
-      Enum.any?(grid, fn existing_ship ->
-        Enum.any?(Tuple.to_list(existing_ship), fn square ->
-          elem(square, 0) in new_ship
-        end)
-      end)
+    already_exists = assert_ship_position(grid, ship, fn square, new_ship ->
+      square in new_ship
+    end)
 
     if already_exists do
       {:error, :ships_overlap, ship}
@@ -80,6 +75,16 @@ defmodule Battleship.Grid do
     else
       {:ok}
     end
+  end
+
+  defp assert_ship_position(grid, ship, fun) do
+    new_ship = Tuple.to_list(ship)
+
+    Enum.any?(grid, fn existing_ship ->
+      Enum.any?(Tuple.to_list(existing_ship), fn square ->
+        fun.(elem(square, 0), new_ship)
+      end)
+    end)
   end
 
   defp ship_type(ship) when is_tuple(ship) do
