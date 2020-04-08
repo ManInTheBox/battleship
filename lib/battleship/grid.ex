@@ -35,9 +35,10 @@ defmodule Battleship.Grid do
   end
 
   defp assert_ships_not_overlap(grid, ship) do
-    already_exists = assert_ship_position(grid, ship, fn square, new_ship ->
-      square in new_ship
-    end)
+    already_exists =
+      assert_ship_position(grid, ship, fn square, new_ship ->
+        square in new_ship
+      end)
 
     if already_exists do
       {:error, :ships_overlap, ship}
@@ -47,20 +48,21 @@ defmodule Battleship.Grid do
   end
 
   defp assert_ships_not_touching(grid, ship) do
-    is_touching = assert_ship_position(grid, ship, fn {x, y}, new_ship ->
-      not_allowed_squares = [
-        {x + 1, y},
-        {x - 1, y},
-        {x, y + 1},
-        {x, y - 1},
-        {x + 1, y + 1},
-        {x + 1, y - 1},
-        {x - 1, y + 1},
-        {x - 1, y - 1}
-      ]
+    is_touching =
+      assert_ship_position(grid, ship, fn {x, y}, new_ship ->
+        not_allowed_squares = [
+          {x + 1, y},
+          {x - 1, y},
+          {x, y + 1},
+          {x, y - 1},
+          {x + 1, y + 1},
+          {x + 1, y - 1},
+          {x - 1, y + 1},
+          {x - 1, y - 1}
+        ]
 
-      Enum.any?(new_ship, fn new_square -> new_square in not_allowed_squares end)
-    end)
+        Enum.any?(new_ship, fn new_square -> new_square in not_allowed_squares end)
+      end)
 
     if is_touching do
       {:error, :ships_touching_each_other, ship}
