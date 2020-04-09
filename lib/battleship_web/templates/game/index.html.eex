@@ -1,8 +1,7 @@
 <div class="phx-hero">
-  <form action="<%= Routes.game_path(@conn, :index) %>" method="post">
+  <%= form_for @conn, Routes.game_path(@conn, :create), fn f -> %>
     <table id="grid"></table>
-    <input type="hidden" id="ships" />
-    <input type="submit" value="Play!" />
-    <input type="hidden" value="<%= @token %>" name="_csrf_token"/>
-  </form>
+    <%= hidden_input f, :ships %>
+    <%= submit "Play!" %>
+  <% end %>
 </div>
