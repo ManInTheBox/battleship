@@ -1,6 +1,8 @@
 <div class="phx-hero">
-  <h2>Game home page</h2>
-
-  <div id="messages"></div>
-  <input id="chat-input" type="text"></input>
+  <form action="<%= Routes.game_path(@conn, :index) %>" method="post">
+    <table id="grid"></table>
+    <input type="hidden" id="ships" />
+    <input type="submit" value="Play!" />
+    <input type="hidden" value="<%= @token %>" name="_csrf_token"/>
+  </form>
 </div>

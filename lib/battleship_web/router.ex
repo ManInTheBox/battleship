@@ -19,6 +19,7 @@ defmodule BattleshipWeb.Router do
     get "/", PageController, :index
 
     get "/game", GameController, :index
+    post "/game", GameController, :index
     get "/game/:id", GameController, :show
   end
 
