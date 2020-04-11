@@ -7,8 +7,11 @@ defmodule BattleshipWeb.GameController do
   end
 
   def create(conn, params) do
-    squares = create_squares(params["ships"])
-    ships = create_ships(squares)
+    grid =
+      params["ships"]
+      |> create_squares()
+      |> create_ships()
+      |> create_grid()
 
     render(conn, "index.html", token: get_csrf_token())
   end
@@ -37,6 +40,7 @@ defmodule BattleshipWeb.GameController do
   end
 
   defp create_ship(square, []), do: [[square]]
+
   defp create_ship({x2, y2} = square, acc) do
     [ship | tail] = acc
     {x1, y1} = hd(ship)
@@ -48,6 +52,14 @@ defmodule BattleshipWeb.GameController do
       [ship | tail]
     else
       [[square] | acc]
+    end
+  end
+
+  defp create_grid(ships) do
+    grid = Battleship.Grid.new()
+
+    for ship <- ships do
+      hd(Battleship.Grid.add_ship(grid, ship))
     end
   end
 end
