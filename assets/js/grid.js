@@ -27,6 +27,12 @@ for (let i = 1; i <= 10; i++) {
   grid.appendChild(tr);
 }
 
+for (const id of ships.value.split(' ').filter(Boolean)) {
+  const td = document.getElementById(`square_${id}`);
+  td.style.backgroundColor = '#0000ff';
+  td.classList.add('occupied');
+}
+
 grid.append(ships);
 
 export default grid;
