@@ -21,7 +21,9 @@ defmodule BattleshipWeb.GameController do
   end
 
   defp create_squares(ships) do
-    Enum.map(String.split(ships), fn square ->
+    ships
+    |> String.split()
+    |> Enum.map(fn square ->
       [x, y] = String.split(square, "-")
       Battleship.Square.new({String.to_integer(x), String.to_integer(y)})
     end)
@@ -33,9 +35,22 @@ defmodule BattleshipWeb.GameController do
     |> Enum.reduce([], &create_ship/2)
     |> Enum.reverse()
     |> Enum.map(fn ship ->
-      ship
-      |> Enum.reverse()
-      |> List.to_tuple()
+      case ship do
+        [square1] ->
+          Battleship.Ship.new(square1)
+
+        [square1, square2] ->
+          Battleship.Ship.new(square1, square2)
+
+        [square1, square2, square3] ->
+          Battleship.Ship.new(square1, square2, square3)
+
+        [square1, square2, square3, square4] ->
+          Battleship.Ship.new(square1, square2, square3, square4)
+
+        _ ->
+          {:error, :unknown_ship_type, ship}
+      end
     end)
   end
 
