@@ -71,10 +71,8 @@ defmodule BattleshipWeb.GameController do
   end
 
   defp create_grid(ships) do
-    grid = Battleship.Grid.new()
-
-    for ship <- ships do
-      hd(Battleship.Grid.add_ship(grid, ship))
+    for ship <- ships, reduce: Battleship.Grid.new do
+      grid -> Battleship.Grid.add_ship(grid, ship)
     end
   end
 end
