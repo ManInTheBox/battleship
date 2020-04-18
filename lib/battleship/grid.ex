@@ -80,7 +80,7 @@ defmodule Battleship.Grid do
           {x - 1, y - 1}
         ]
 
-        Enum.any?(new_ship, fn new_square -> new_square in not_allowed_squares end)
+        Enum.any?(new_ship, &(&1 in not_allowed_squares))
       end)
 
     if is_touching do
