@@ -56,7 +56,9 @@ defmodule Battleship.GridTest do
     grid = create_grid()
     assert {:sunk, {{{1, 1}, :sunk}}, grid} = Battleship.Grid.fire_torpedo(grid, {1, 1})
     assert {:hit, {{1, 3}, :hit}, grid} = Battleship.Grid.fire_torpedo(grid, {1, 3})
-    assert {:sunk, {{{1, 3}, :sunk}, {{1, 4}, :sunk}}, grid} = Battleship.Grid.fire_torpedo(grid, {1, 4})
+
+    assert {:sunk, {{{1, 3}, :sunk}, {{1, 4}, :sunk}}, grid} =
+             Battleship.Grid.fire_torpedo(grid, {1, 4})
   end
 
   defp ships_arranged_data_provider() do

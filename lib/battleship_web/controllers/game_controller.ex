@@ -27,7 +27,6 @@ defmodule BattleshipWeb.GameController do
       [x, y] = String.split(square, "-")
       Battleship.Square.new({String.to_integer(x), String.to_integer(y)})
     end)
-    |> Enum.sort()
   end
 
   defp create_ships(squares) do
@@ -60,7 +59,9 @@ defmodule BattleshipWeb.GameController do
     [ship | tail] = acc
     {x1, y1} = hd(ship)
 
-    is_sibling = (x1 + 1 === x2 and y1 === y2) or (y1 + 1 === y2 and x1 === x2)
+    is_sibling =
+      ((x1 + 1 === x2 or x1 - 1 === x2) and y1 === y2) or
+        ((y1 + 1 === y2 or y1 - 1 === y2) and x1 === x2)
 
     if is_sibling do
       ship = [square | ship]
