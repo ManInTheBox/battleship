@@ -42,7 +42,24 @@ defmodule Battleship.GridTest do
              |> Battleship.Grid.add_ship(destroyer)
   end
 
-  def ships_arranged_data_provider() do
+  test "fire torpedo miss" do
+    grid = create_grid()
+    assert {:water, {{10, 10}, :water}, grid} = Battleship.Grid.fire_torpedo(grid, {10, 10})
+  end
+
+  test "fire torpedo hit" do
+    grid = create_grid()
+    assert {:hit, {{1, 3}, :hit}, grid} = Battleship.Grid.fire_torpedo(grid, {1, 3})
+  end
+
+  test "fire torpedo sunk" do
+    grid = create_grid()
+    assert {:sunk, {{{1, 1}, :sunk}}, grid} = Battleship.Grid.fire_torpedo(grid, {1, 1})
+    assert {:hit, {{1, 3}, :hit}, grid} = Battleship.Grid.fire_torpedo(grid, {1, 3})
+    assert {:sunk, {{{1, 3}, :sunk}, {{1, 4}, :sunk}}, grid} = Battleship.Grid.fire_torpedo(grid, {1, 4})
+  end
+
+  defp ships_arranged_data_provider() do
     submarine = Battleship.Ship.new(Battleship.Square.new({10, 10}))
 
     destroyer =
@@ -76,7 +93,7 @@ defmodule Battleship.GridTest do
     ]
   end
 
-  def create_grid() do
+  defp create_grid() do
     submarine1 = Battleship.Ship.new(Battleship.Square.new({1, 1}))
     submarine2 = Battleship.Ship.new(Battleship.Square.new({3, 1}))
     submarine3 = Battleship.Ship.new(Battleship.Square.new({5, 1}))

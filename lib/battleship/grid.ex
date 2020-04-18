@@ -1,4 +1,5 @@
 defmodule Battleship.Grid do
+  require Logger
   @size 1..10
   @ship_count %{submarine: 4, destroyer: 3, cruiser: 2, battleship: 1}
 
@@ -10,6 +11,24 @@ defmodule Battleship.Grid do
          {:ok} <- assert_ships_not_overlap(grid, ship),
          {:ok} <- assert_ships_not_touching(grid, ship) do
       do_add_ship(grid, ship)
+    end
+  end
+
+  # {:water, {{1, 2}, :water}, grid}
+  # {:hit, {{1, 3}, :hit}, grid}
+  # {:hit, {{1, 4}, :hit}, grid}
+  # {:sunk, {{{1, 3}, :sunk}, {{1, 4}, :sunk}, {{1, 5}, :sunk}}, grid}
+  def fire_torpedo(grid, square) do
+    ship =
+      Enum.find(grid, fn ship ->
+        Enum.find(Tuple.to_list(ship), fn {s, state} ->
+          square == s && state == :alive
+        end)
+      end)
+
+    case ship do
+      nil -> torpedo_miss(grid, square)
+      _ -> torpedo_hit(grid, ship, square)
     end
   end
 
@@ -98,5 +117,39 @@ defmodule Battleship.Grid do
       _ ->
         {:error, :unknown_ship_type}
     end
+  end
+
+  defp torpedo_miss(grid, square) do
+    {:water, {square, :water}, grid}
+  end
+
+  defp torpedo_hit(grid, ship, square) do
+    ship =
+      ship
+      |> Tuple.to_list()
+      |> Enum.map(fn {s, state} ->
+        if s == square do
+          {s, :hit}
+        else
+          {s, state}
+        end
+      end)
+
+    if Enum.all?(ship, fn {_, state} -> state == :hit end) do
+      ship = Enum.map(ship, fn {s, _} -> {s, :sunk} end)
+      {:sunk, List.to_tuple(ship), update_grid(grid, ship, square)}
+    else
+      {:hit, {square, :hit}, update_grid(grid, ship, square)}
+    end
+  end
+
+  defp update_grid(grid, ship, square) do
+    Enum.map(grid, fn sh ->
+      if Enum.any?(Tuple.to_list(sh), fn {s, _} -> s == square end) do
+        List.to_tuple(ship)
+      else
+        sh
+      end
+    end)
   end
 end
