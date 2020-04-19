@@ -11,7 +11,8 @@ defmodule Battleship.Application do
       # Start the Ecto repository
       Battleship.Repo,
       # Start the endpoint when the application starts
-      BattleshipWeb.Endpoint
+      BattleshipWeb.Endpoint,
+      {Registry, keys: :unique, name: Battleship.GamePool}
       # Starts a worker by calling: Battleship.Worker.start_link(arg)
       # {Battleship.Worker, arg},
     ]

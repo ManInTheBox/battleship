@@ -13,7 +13,10 @@ defmodule BattleshipWeb.GameController do
       |> create_ships()
       |> create_grid()
 
-    render(conn, "index.html", token: get_csrf_token())
+    id = Battleship.Game.create(grid)
+    response = Battleship.Game.get_grid(id)
+
+    redirect(conn, to: Routes.game_path(conn, :show, id))
   end
 
   def show(conn, %{"id" => id} = _params) do
