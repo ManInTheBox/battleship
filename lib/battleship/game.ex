@@ -1,11 +1,10 @@
 defmodule Battleship.Game do
   use GenServer
 
-  @id "abc-def"
-
   def create(grid) do
-    GenServer.start_link(__MODULE__, grid, name: via_tuple(@id))
-    @id
+    id = UUID.uuid4()
+    GenServer.start_link(__MODULE__, grid, name: via_tuple(id))
+    id
   end
 
   def get_grid(id) do
