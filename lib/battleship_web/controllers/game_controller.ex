@@ -14,13 +14,23 @@ defmodule BattleshipWeb.GameController do
       |> create_grid()
 
     id = Battleship.Game.create(grid)
-    response = Battleship.Game.get_grid(id)
 
     redirect(conn, to: Routes.game_path(conn, :show, id))
   end
 
   def show(conn, %{"id" => id} = _params) do
-    render(conn, "show.html", id: id)
+    squares =
+      id
+      |> Battleship.Game.get_grid()
+      |> Enum.map(fn ship ->
+        Enum.map(Tuple.to_list(ship), fn {square, state} ->
+          [Enum.join(Tuple.to_list(square), "-"), state]
+        end)
+      end)
+      |> Enum.concat()
+      |> Jason.encode!()
+
+    render(conn, "show.html", squares: squares)
   end
 
   defp create_squares(ships) do

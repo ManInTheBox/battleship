@@ -18,7 +18,7 @@ defmodule Battleship.Game do
 
   @impl true
   def handle_call(:get_grid, _from, state) do
-    {:reply, state, state}
+    {:reply, state["my_grid"], state}
   end
 
   defp via_tuple(key) do
