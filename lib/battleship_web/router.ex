@@ -16,15 +16,8 @@ defmodule BattleshipWeb.Router do
   scope "/", BattleshipWeb do
     pipe_through :browser
 
-    get "/", PageController, :index
-
-    get "/game", GameController, :index
-    post "/game", GameController, :create
+    get "/", GameController, :index
+    post "/", GameController, :create
     get "/game/:id", GameController, :show
   end
-
-  # Other scopes may use custom stacks.
-  # scope "/api", BattleshipWeb do
-  #   pipe_through :api
-  # end
 end
