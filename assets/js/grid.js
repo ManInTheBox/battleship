@@ -7,6 +7,16 @@ export function createEmptyGrid() {
 
   let ships = document.getElementById('ships');
 
+  let colsHeading = document.createElement('tr');
+
+  for (const char of [...' ABCDEFGHIJ']) {
+    let td = document.createElement('th');
+    td.innerHTML = char;
+    colsHeading.appendChild(td)
+  }
+
+  grid.appendChild(colsHeading);
+
   for (let i = 1; i <= 10; i++) {
     let tr = document.createElement('tr');
 
@@ -31,6 +41,11 @@ export function createEmptyGrid() {
     }
 
     grid.appendChild(tr);
+
+    let rowsHeading = document.createElement('td');
+    rowsHeading.className = 'rows-heading';
+    rowsHeading.innerHTML = i;
+    tr.insertBefore(rowsHeading, document.getElementById(`square_1-${i}`));
   }
 
   for (const id of ships.value.split(' ').filter(Boolean)) {

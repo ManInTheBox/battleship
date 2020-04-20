@@ -1,7 +1,7 @@
-<div class="phx-hero">
+<div id="create-game">
   <%= form_for @conn, Routes.game_path(@conn, :create), fn f -> %>
     <table id="new-grid"></table>
     <%= hidden_input f, :ships %>
-    <%= submit "Play!" %>
+    <div id="play-button"><%= submit "Play!" %></div>
   <% end %>
 </div>
