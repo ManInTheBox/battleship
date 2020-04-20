@@ -14,3 +14,18 @@ td {
   padding: 0;
 }
 
+.battlefield > table {
+  width: 340px;
+  height: 340px;
+}
+
+.battlefield {
+  display: block;
+  float: left;
+  padding: 1em;
+  width: 50%;
+}
+
+.disabled {
+  opacity: 0.3;
+}

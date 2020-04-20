@@ -1,4 +1,12 @@
-<div class="phx-hero">
-  <table id="my-grid" data-squares="<%= @squares %>"></table>
-  <table id="opponent-grid" data-squares="<%= @squares %>"></table>
+<div>
+  <div class="alert alert-info"><p id="waiting-for-opponent">Waiting for opponnent</p></div>
+  <div class="battlefield"><table id="my-grid" data-squares="<%= @squares %>"></table></div>
+  <div class="battlefield disabled"><table id="opponent-grid" data-squares="<%= @squares %>"></table></div>
 </div>
+
+<script type="text/javascript">
+  setInterval(function () {
+    let opponent = document.getElementById('waiting-for-opponent');
+    opponent.innerHTML = opponent.innerHTML.endsWith('...') ? opponent.innerHTML.replace('...', '') : opponent.innerHTML + '.';
+  }, 700);
+</script>
