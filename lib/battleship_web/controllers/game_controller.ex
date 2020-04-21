@@ -3,7 +3,16 @@ defmodule BattleshipWeb.GameController do
   require Logger
 
   def index(conn, _params) do
-    render(conn, "index.html", token: get_csrf_token())
+    user_id =
+      if conn.req_cookies["user_id"] == nil do
+        UUID.uuid4()
+      else
+        conn.req_cookies["user_id"]
+      end
+
+    conn = Plug.Conn.put_resp_cookie(conn, "user_id", user_id)
+
+    render(conn, "index.html")
   end
 
   def create(conn, params) do
