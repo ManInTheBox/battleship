@@ -64,6 +64,16 @@ export function createMyGrid() {
     return;
   }
 
+  let colsHeading = document.createElement('tr');
+
+  for (const char of [...' ABCDEFGHIJ']) {
+    let td = document.createElement('th');
+    td.innerHTML = char;
+    colsHeading.appendChild(td)
+  }
+
+  grid.appendChild(colsHeading);
+
   for (let i = 1; i <= 10; i++) {
     let tr = document.createElement('tr');
 
@@ -76,6 +86,11 @@ export function createMyGrid() {
     }
 
     grid.appendChild(tr);
+
+    let rowsHeading = document.createElement('td');
+    rowsHeading.className = 'rows-heading';
+    rowsHeading.innerHTML = i;
+    tr.insertBefore(rowsHeading, document.getElementById(`my_square_1-${i}`));
   }
 
   for (const square of JSON.parse(grid.dataset.squares)) {
@@ -94,6 +109,16 @@ export function createOpponentGrid() {
     return;
   }
 
+  let colsHeading = document.createElement('tr');
+
+  for (const char of [...' ABCDEFGHIJ']) {
+    let td = document.createElement('th');
+    td.innerHTML = char;
+    colsHeading.appendChild(td)
+  }
+
+  grid.appendChild(colsHeading);
+
   for (let i = 1; i <= 10; i++) {
     let tr = document.createElement('tr');
 
@@ -106,6 +131,11 @@ export function createOpponentGrid() {
     }
 
     grid.appendChild(tr);
+
+    let rowsHeading = document.createElement('td');
+    rowsHeading.className = 'rows-heading';
+    rowsHeading.innerHTML = i;
+    tr.insertBefore(rowsHeading, document.getElementById(`opponent_square_1-${i}`));
   }
 
   for (const square of JSON.parse(grid.dataset.squares)) {
