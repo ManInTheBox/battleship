@@ -12,7 +12,8 @@ defmodule Battleship.Application do
       Battleship.Repo,
       # Start the endpoint when the application starts
       BattleshipWeb.Endpoint,
-      {Registry, keys: :unique, name: Battleship.GamePool}
+      {Registry, keys: :unique, name: Battleship.GamePool},
+      Battleship.GameSeek,
       # Starts a worker by calling: Battleship.Worker.start_link(arg)
       # {Battleship.Worker, arg},
     ]

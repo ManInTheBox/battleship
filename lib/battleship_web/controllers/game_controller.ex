@@ -16,21 +16,27 @@ defmodule BattleshipWeb.GameController do
   end
 
   def create(conn, params) do
+    user = conn.req_cookies["user_id"]
     grid =
       params["ships"]
       |> create_squares()
       |> create_ships()
       |> create_grid()
 
-    id = Battleship.Game.create(grid)
-
-    redirect(conn, to: Routes.game_path(conn, :show, id))
+    case Battleship.GameSeek.find_matching_seek(user) do
+      nil ->
+        id = Battleship.GameSeek.create(user, grid)
+        redirect(conn, to: Routes.game_path(conn, :show_seek, id))
+      %{id: id} ->
+        IO.puts "create game..."
+        redirect(conn, to: Routes.game_path(conn, :show_seek, id))
+    end
   end
 
-  def show(conn, %{"id" => id} = _params) do
+  def show_seek(conn, %{"id" => id} = _params) do
     squares =
       id
-      |> Battleship.Game.get_grid()
+      |> Battleship.GameSeek.get_grid(conn.req_cookies["user_id"])
       |> Enum.map(fn ship ->
         Enum.map(Tuple.to_list(ship), fn {square, state} ->
           [Enum.join(Tuple.to_list(square), "-"), state]
