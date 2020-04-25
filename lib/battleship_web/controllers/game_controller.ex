@@ -17,6 +17,7 @@ defmodule BattleshipWeb.GameController do
 
   def create(conn, params) do
     user = conn.req_cookies["user_id"]
+
     grid =
       params["ships"]
       |> create_squares()
@@ -26,26 +27,52 @@ defmodule BattleshipWeb.GameController do
     case Battleship.GameSeek.find_matching_seek(user) do
       nil ->
         id = Battleship.GameSeek.create(user, grid)
-        redirect(conn, to: Routes.game_path(conn, :show_seek, id))
-      %{id: id} ->
-        IO.puts "create game..."
-        redirect(conn, to: Routes.game_path(conn, :show_seek, id))
+        redirect(conn, to: Routes.game_path(conn, :show, id))
+
+      %{id: id, from: opponent_user, grid: opponent_grid} ->
+        players = [
+          %{"id" => user, "grid" => grid},
+          %{"id" => opponent_user, "grid" => opponent_grid}
+        ]
+
+        Battleship.Game.create(id, players)
+        redirect(conn, to: Routes.game_path(conn, :show, id))
     end
   end
 
-  def show_seek(conn, %{"id" => id} = _params) do
-    squares =
-      id
-      |> Battleship.GameSeek.get_grid(conn.req_cookies["user_id"])
-      |> Enum.map(fn ship ->
-        Enum.map(Tuple.to_list(ship), fn {square, state} ->
-          [Enum.join(Tuple.to_list(square), "-"), state]
-        end)
-      end)
-      |> Enum.concat()
-      |> Jason.encode!()
+  def show(conn, %{"id" => id} = _params) do
+    case get_grids(id, conn.req_cookies["user_id"]) do
+      {:error, :not_found} ->
+        conn = put_flash(conn, :error, "This game does not exist.")
+        redirect(conn, to: Routes.game_path(conn, :index))
 
-    render(conn, "show.html", squares: squares)
+      {status, my_grid, opponent_grid} ->
+        my_squares =
+          my_grid
+          |> Enum.map(fn ship ->
+            Enum.map(Tuple.to_list(ship), fn {square, state} ->
+              [Enum.join(Tuple.to_list(square), "-"), state]
+            end)
+          end)
+          |> Enum.concat()
+          |> Jason.encode!()
+
+        opponent_squares =
+          opponent_grid
+          |> Enum.map(fn ship ->
+            Enum.map(Tuple.to_list(ship), fn {square, state} ->
+              [Enum.join(Tuple.to_list(square), "-"), state]
+            end)
+          end)
+          |> Enum.concat()
+          |> Jason.encode!()
+
+        render(conn, "show.html",
+          my_squares: my_squares,
+          opponent_squares: opponent_squares,
+          status: status
+        )
+    end
   end
 
   defp create_squares(ships) do
@@ -102,6 +129,32 @@ defmodule BattleshipWeb.GameController do
   defp create_grid(ships) do
     for ship <- ships, reduce: Battleship.Grid.new() do
       grid -> Battleship.Grid.add_ship(grid, ship)
+    end
+  end
+
+  defp get_grids(id, user) do
+    case Battleship.Game.find_by_id(id) do
+      {:error, :not_found} ->
+        game_seek = Battleship.GameSeek.find_by_id_and_user(id, user)
+
+        if game_seek == nil do
+          {:error, :not_found}
+        else
+          my_grid = game_seek.grid
+          opponent_grid = Battleship.Grid.new()
+          {:waiting_for_opponent, my_grid, opponent_grid}
+        end
+
+      game ->
+        if get_in(game, [:player1, "id"]) == user do
+          my_grid = get_in(game, [:player1, "my_grid"])
+          opponent_grid = get_in(game, [:player1, "opponent_grid"])
+          {:ready, my_grid, opponent_grid}
+        else
+          my_grid = get_in(game, [:player2, "my_grid"])
+          opponent_grid = get_in(game, [:player2, "opponent_grid"])
+          {:ready, my_grid, opponent_grid}
+        end
     end
   end
 end

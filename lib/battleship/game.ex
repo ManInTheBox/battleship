@@ -1,27 +1,49 @@
 defmodule Battleship.Game do
   use GenServer
 
-  def create(grid) do
-    id = UUID.uuid4()
-    GenServer.start_link(__MODULE__, grid, name: via_tuple(id))
+  def create(id, players) do
+    GenServer.start_link(__MODULE__, %{id: id, players: players}, name: via_tuple(id))
     id
   end
 
-  def get_grid(id) do
-    GenServer.call(via_tuple(id), :get_grid)
+  def find_by_id(id) do
+    case Registry.lookup(__MODULE__, id) do
+      [] ->
+        {:error, :not_found}
+
+      [{game, _}] ->
+        GenServer.call(via_tuple(id), :find_by_id)
+    end
   end
 
   @impl true
-  def init(grid) do
-    {:ok, %{"my_grid" => grid}}
+  def init(game) do
+    player1 = Enum.at(game.players, 0)
+    player2 = Enum.at(game.players, 1)
+
+    IO.inspect(player1, label: "Pre kreiranja player1")
+    IO.inspect(player2, label: "Pre kreiranja player1")
+
+    game = %{
+      id: game.id,
+      start_time: DateTime.utc_now(),
+      player1: %{"id" => player1["id"], "my_grid" => player1["grid"], "opponent_grid" => []},
+      player2: %{"id" => player2["id"], "my_grid" => player2["grid"], "opponent_grid" => []}
+    }
+
+    IO.inspect(game, label: "Upravo je kreirana partija")
+
+    Battleship.GameSeek.remove(game.id)
+
+    {:ok, game}
   end
 
   @impl true
-  def handle_call(:get_grid, _from, state) do
-    {:reply, state["my_grid"], state}
+  def handle_call(:find_by_id, _from, game) do
+    {:reply, game, game}
   end
 
   defp via_tuple(key) do
-    {:via, Registry, {Battleship.GamePool, key}}
+    {:via, Registry, {__MODULE__, key}}
   end
 end

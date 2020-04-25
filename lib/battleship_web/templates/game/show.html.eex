@@ -1,12 +1,18 @@
-<div>
-  <div class="alert alert-info"><p id="waiting-for-opponent">Waiting for opponnent</p></div>
-  <div class="battlefield"><table id="my-grid" data-squares="<%= @squares %>"></table></div>
-  <div class="battlefield disabled"><table id="opponent-grid" data-squares="<%= @squares %>"></table></div>
+<div id="play-game">
+  <div class="battlefield"><table id="my-grid" data-squares="<%= @my_squares %>"></table></div>
+  <div class="battlefield disabled"><table id="opponent-grid" data-squares="<%= @opponent_squares %>"></table></div>
 </div>
 
-<script type="text/javascript">
-  setInterval(function () {
-    let opponent = document.getElementById('waiting-for-opponent');
-    opponent.innerHTML = opponent.innerHTML.endsWith('...') ? opponent.innerHTML.replace('...', '') : opponent.innerHTML + '.';
-  }, 700);
-</script>
+<%= if @status == :waiting_for_opponent do %>
+  <script type="text/javascript">
+    const opponent = document.createElement('p');
+    opponent.classList.add('alert');
+    opponent.classList.add('alert-info');
+    opponent.innerHTML = 'Waiting for opponnent';
+    document.getElementById('play-game').insertBefore(opponent, document.getElementsByClassName('battlefield')[0]);
+
+    setInterval(function () {
+      opponent.innerHTML = opponent.innerHTML.endsWith('...') ? opponent.innerHTML.replace('...', '') : opponent.innerHTML + '.';
+    }, 700);
+  </script>
+<% end %>
