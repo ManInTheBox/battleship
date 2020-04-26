@@ -55,3 +55,7 @@ td.rows-heading {
 .disabled {
   opacity: 0.3;
 }
+
+.hidden {
+  display: none;
+}

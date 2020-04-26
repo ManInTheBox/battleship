@@ -5,13 +5,11 @@
 
 <%= if @status == :waiting_for_opponent do %>
   <script type="text/javascript">
-    const opponent = document.createElement('p');
-    opponent.classList.add('alert');
-    opponent.classList.add('alert-info');
+    const opponent = document.querySelector('.alert-info');
+    opponent.classList.add('visible');
     opponent.innerHTML = 'Waiting for opponnent';
-    document.getElementById('play-game').insertBefore(opponent, document.getElementsByClassName('battlefield')[0]);
 
-    setInterval(function () {
+    setInterval(() => {
       opponent.innerHTML = opponent.innerHTML.endsWith('...') ? opponent.innerHTML.replace('...', '') : opponent.innerHTML + '.';
     }, 700);
   </script>
