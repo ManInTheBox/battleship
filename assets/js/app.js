@@ -21,3 +21,12 @@ import { createEmptyGrid, createMyGrid, createOpponentGrid } from "./grid"
 createEmptyGrid();
 createMyGrid();
 createOpponentGrid();
+
+(() => {
+  setTimeout(() => {
+    document.querySelectorAll('.alert').forEach(alert => {
+      if (alert.classList.contains('visible')) return;
+      alert.classList.add('hidden');
+    });
+  }, 3000);
+})();
