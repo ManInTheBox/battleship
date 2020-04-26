@@ -36,6 +36,9 @@ defmodule BattleshipWeb.GameController do
         ]
 
         Battleship.Game.create(id, players)
+        BattleshipWeb.Endpoint.broadcast("game:#{id}", "game_started", %{"message" => "The game has just started."})
+        conn = put_flash(conn, :success, "The game has just started.")
+
         redirect(conn, to: Routes.game_path(conn, :show, id))
     end
   end
@@ -66,8 +69,6 @@ defmodule BattleshipWeb.GameController do
           end)
           |> Enum.concat()
           |> Jason.encode!()
-
-        conn = if status == :ready, do: put_flash(conn, :success, "The game has just started."), else: conn
 
         render(conn, "show.html",
           my_squares: my_squares,

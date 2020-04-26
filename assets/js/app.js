@@ -11,16 +11,14 @@ import css from "../css/app.css"
 //
 import "phoenix_html"
 
-// Import local files
-//
-// Local files can be imported directly using relative paths, for example:
-// import socket from "./socket"
-
 import { createEmptyGrid, createMyGrid, createOpponentGrid } from "./grid"
+import { gameSocket } from "./socket"
 
 createEmptyGrid();
 createMyGrid();
 createOpponentGrid();
+
+gameSocket();
 
 (() => {
   setTimeout(() => {
@@ -28,5 +26,5 @@ createOpponentGrid();
       if (alert.classList.contains('visible')) return;
       alert.classList.add('hidden');
     });
-  }, 3000);
+  }, 5000);
 })();
