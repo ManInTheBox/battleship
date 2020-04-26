@@ -67,6 +67,8 @@ defmodule BattleshipWeb.GameController do
           |> Enum.concat()
           |> Jason.encode!()
 
+        conn = if status == :ready, do: put_flash(conn, :success, "The game has just started.")
+
         render(conn, "show.html",
           my_squares: my_squares,
           opponent_squares: opponent_squares,
