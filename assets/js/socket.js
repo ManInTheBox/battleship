@@ -25,13 +25,16 @@ export function gameSocket() {
   // })
 
   channel.on("game_started", payload => {
-    console.log(payload)
     document.querySelector('.alert-info').classList.add('hidden');
     const successAlert = document.querySelector('.alert-success');
     successAlert.classList.remove('hidden');
     successAlert.classList.add('visible');
     successAlert.innerHTML = payload.message;
     setTimeout(() => successAlert.classList.add('hidden'), 5000);
+
+    if (payload.is_my_turn) {
+      document.getElementById('opponent-battlefield').classList.remove('disabled');
+    }
   })
 
   channel.join()

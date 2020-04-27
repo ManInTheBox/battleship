@@ -1,6 +1,6 @@
 <div id="play-game">
   <div class="battlefield"><table id="my-grid" data-squares="<%= @my_squares %>"></table></div>
-  <div class="battlefield <%= if not @is_my_turn, do: "disabled" %>"><table id="opponent-grid" data-squares="<%= @opponent_squares %>"></table></div>
+  <div id="opponent-battlefield" class="battlefield <%= if not @is_my_turn, do: "disabled" %>"><table id="opponent-grid" data-squares="<%= @opponent_squares %>"></table></div>
 </div>
 
 <%= if @status == :waiting_for_opponent do %>

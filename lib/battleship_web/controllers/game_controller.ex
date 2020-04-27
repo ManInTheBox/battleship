@@ -36,7 +36,13 @@ defmodule BattleshipWeb.GameController do
         ]
 
         Battleship.Game.create(id, players)
-        BattleshipWeb.Endpoint.broadcast("game:#{id}", "game_started", %{"message" => "The game has just started."})
+        game = Battleship.Game.find_by_id(id)
+
+        BattleshipWeb.Endpoint.broadcast("game:#{id}", "game_started", %{
+          "message" => "The game has just started.",
+          "is_my_turn" => game[:player_to_shoot] != conn.req_cookies["user_id"]
+        })
+
         conn = put_flash(conn, :success, "The game has just started.")
 
         redirect(conn, to: Routes.game_path(conn, :show, id))

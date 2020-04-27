@@ -11,7 +11,7 @@ defmodule Battleship.Game do
       [] ->
         {:error, :not_found}
 
-      [{game, _}] ->
+      [{_game, _}] ->
         GenServer.call(via_tuple(id), :find_by_id)
     end
   end
