@@ -25,7 +25,8 @@ defmodule Battleship.Game do
       id: game.id,
       start_time: DateTime.utc_now(),
       player1: %{"id" => player1["id"], "my_grid" => player1["grid"], "opponent_grid" => []},
-      player2: %{"id" => player2["id"], "my_grid" => player2["grid"], "opponent_grid" => []}
+      player2: %{"id" => player2["id"], "my_grid" => player2["grid"], "opponent_grid" => []},
+      player_to_shoot: Enum.random([player1["id"], player2["id"]])
     }
 
     Battleship.GameSeek.remove(game.id)

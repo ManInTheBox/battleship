@@ -49,7 +49,7 @@ defmodule BattleshipWeb.GameController do
         conn = put_flash(conn, :error, "This game does not exist.")
         redirect(conn, to: Routes.game_path(conn, :index))
 
-      {status, my_grid, opponent_grid} ->
+      {status, my_grid, opponent_grid, nil} ->
         my_squares =
           my_grid
           |> Enum.map(fn ship ->
@@ -73,7 +73,36 @@ defmodule BattleshipWeb.GameController do
         render(conn, "show.html",
           my_squares: my_squares,
           opponent_squares: opponent_squares,
-          status: status
+          status: status,
+          is_my_turn: false
+        )
+
+      {status, my_grid, opponent_grid, game} ->
+        my_squares =
+          my_grid
+          |> Enum.map(fn ship ->
+            Enum.map(Tuple.to_list(ship), fn {square, state} ->
+              [Enum.join(Tuple.to_list(square), "-"), state]
+            end)
+          end)
+          |> Enum.concat()
+          |> Jason.encode!()
+
+        opponent_squares =
+          opponent_grid
+          |> Enum.map(fn ship ->
+            Enum.map(Tuple.to_list(ship), fn {square, state} ->
+              [Enum.join(Tuple.to_list(square), "-"), state]
+            end)
+          end)
+          |> Enum.concat()
+          |> Jason.encode!()
+
+        render(conn, "show.html",
+          my_squares: my_squares,
+          opponent_squares: opponent_squares,
+          status: status,
+          is_my_turn: game[:player_to_shoot] == conn.req_cookies["user_id"]
         )
     end
   end
@@ -145,18 +174,18 @@ defmodule BattleshipWeb.GameController do
         else
           my_grid = game_seek.grid
           opponent_grid = Battleship.Grid.new()
-          {:waiting_for_opponent, my_grid, opponent_grid}
+          {:waiting_for_opponent, my_grid, opponent_grid, nil}
         end
 
       game ->
         if get_in(game, [:player1, "id"]) == user do
           my_grid = get_in(game, [:player1, "my_grid"])
           opponent_grid = get_in(game, [:player1, "opponent_grid"])
-          {:ready, my_grid, opponent_grid}
+          {:ready, my_grid, opponent_grid, game}
         else
           my_grid = get_in(game, [:player2, "my_grid"])
           opponent_grid = get_in(game, [:player2, "opponent_grid"])
-          {:ready, my_grid, opponent_grid}
+          {:ready, my_grid, opponent_grid, game}
         end
     end
   end
