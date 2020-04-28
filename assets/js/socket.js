@@ -14,16 +14,6 @@ export function gameSocket() {
 
   let channel = socket.channel(`game:${gameId}`, {})
 
-  // let chatInput = document.querySelector("#chat-input")
-  // let messagesContainer = document.querySelector("#messages")
-
-  // chatInput.addEventListener("keypress", event => {
-  //   if(event.keyCode === 13){
-  //     channel.push("new_msg", {body: chatInput.value})
-  //     chatInput.value = ""
-  //   }
-  // })
-
   channel.on("game_started", payload => {
     document.querySelector('.alert-info').classList.add('hidden');
     const successAlert = document.querySelector('.alert-success');
@@ -33,11 +23,13 @@ export function gameSocket() {
     setTimeout(() => successAlert.classList.add('hidden'), 5000);
 
     if (payload.is_my_turn) {
-      document.getElementById('opponent-battlefield').classList.remove('disabled');
+      document.getElementById('opponent-grid').classList.remove('disabled');
     }
   })
 
   channel.join()
     .receive("ok", resp => { console.log("Joined successfully", resp) })
-    .receive("error", resp => { console.log("Unable to join", resp) })
+    .receive("error", resp => { console.log("Unable to join", resp) });
+
+   return channel;
 }

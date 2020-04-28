@@ -10,7 +10,7 @@ defmodule BattleshipWeb.GameController do
         conn.req_cookies["user_id"]
       end
 
-    conn = Plug.Conn.put_resp_cookie(conn, "user_id", user_id)
+    conn = Plug.Conn.put_resp_cookie(conn, "user_id", user_id, http_only: false)
 
     render(conn, "index.html")
   end

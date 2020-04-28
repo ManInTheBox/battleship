@@ -102,7 +102,15 @@ export function createMyGrid() {
   }
 }
 
-export function createOpponentGrid() {
+export function createOpponentGrid(channel) {
+  if (!document.URL.includes('/game')) return;
+
+  let matches = document.URL.match(/.*\/game\/(?<gameId>.*)/);
+  if (!matches) return;
+
+  let gameId = matches.groups.gameId;
+  if (!gameId) return;
+
   let grid = document.getElementById('opponent-grid');
 
   if (!grid) {
@@ -128,6 +136,16 @@ export function createOpponentGrid() {
       td.id = `opponent_square_${square}`;
 
       tr.appendChild(td);
+
+      td.addEventListener('click', event => {
+        if (grid.classList.contains('disabled')) {
+          return;
+        }
+
+        const user = document.cookie.replace('user_id=', '');
+
+        channel.push('fire_torpedo', {game_id: gameId, square: square, user: user});
+      })
     }
 
     grid.appendChild(tr);

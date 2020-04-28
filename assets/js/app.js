@@ -16,9 +16,10 @@ import { gameSocket } from "./socket"
 
 createEmptyGrid();
 createMyGrid();
-createOpponentGrid();
 
-gameSocket();
+const channel = gameSocket();
+
+createOpponentGrid(channel);
 
 (() => {
   setTimeout(() => {
