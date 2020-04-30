@@ -120,7 +120,7 @@ defmodule Battleship.Grid do
   end
 
   defp torpedo_miss(grid, square) do
-    {:water, {square, :water}, grid}
+    {:water, {square, :water}, update_grid(grid, square)}
   end
 
   defp torpedo_hit(grid, ship, square) do
@@ -141,6 +141,10 @@ defmodule Battleship.Grid do
     else
       {:hit, {square, :hit}, update_grid(grid, ship, square)}
     end
+  end
+
+  defp update_grid(grid, square) do
+    [{{square, :water}} | grid]
   end
 
   defp update_grid(grid, ship, square) do

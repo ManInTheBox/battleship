@@ -16,6 +16,10 @@ defmodule Battleship.Game do
     end
   end
 
+  def update(game) do
+    GenServer.cast(via_tuple(game[:id]), {:update, game})
+  end
+
   @impl true
   def init(game) do
     player1 = Enum.at(game.players, 0)
@@ -37,6 +41,11 @@ defmodule Battleship.Game do
   @impl true
   def handle_call(:find_by_id, _from, game) do
     {:reply, game, game}
+  end
+
+  @impl true
+  def handle_cast({:update, new_game}, _game) do
+    {:noreply, new_game}
   end
 
   defp via_tuple(key) do

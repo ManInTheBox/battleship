@@ -32,8 +32,10 @@ export function gameSocket() {
   channel.on("fire_torpedo_water", payload => {
     if (payload.user === getUser()) {
       document.getElementById(`opponent_square_${payload.square}`).classList.add('water');
+      document.querySelector(`[data-player="${payload.user}"] #opponent-grid`).classList.add('disabled');
     } else {
       document.getElementById(`my_square_${payload.square}`).classList.add('water');
+      document.querySelector(`[data-player="${payload.other_user}"] #opponent-grid`).classList.remove('disabled');
     }
   });
 

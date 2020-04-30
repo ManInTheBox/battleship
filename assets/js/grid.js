@@ -94,11 +94,7 @@ export function createMyGrid() {
   }
 
   for (const square of JSON.parse(grid.dataset.squares)) {
-    let td = document.getElementById(`my_square_${square[0]}`);
-
-    if (square[1] == "alive") {
-      td.style.backgroundColor = '#0000ff';
-    }
+    document.getElementById(`my_square_${square[0]}`).classList.add(square[1]);
   }
 }
 
@@ -157,10 +153,6 @@ export function createOpponentGrid(channel) {
   }
 
   for (const square of JSON.parse(grid.dataset.squares)) {
-    let td = document.getElementById(`opponent_square_${square[0]}`);
-
-    if (square[1] == "alive") {
-      td.style.backgroundColor = '#ff0000';
-    }
+    document.getElementById(`opponent_square_${square[0]}`).classList.add(square[1]);
   }
 }

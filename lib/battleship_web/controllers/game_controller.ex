@@ -80,7 +80,8 @@ defmodule BattleshipWeb.GameController do
           my_squares: my_squares,
           opponent_squares: opponent_squares,
           status: status,
-          is_my_turn: false
+          is_my_turn: false,
+          player: conn.req_cookies["user_id"]
         )
 
       {status, my_grid, opponent_grid, game} ->
@@ -108,7 +109,8 @@ defmodule BattleshipWeb.GameController do
           my_squares: my_squares,
           opponent_squares: opponent_squares,
           status: status,
-          is_my_turn: game[:player_to_shoot] == conn.req_cookies["user_id"]
+          is_my_turn: game[:player_to_shoot] == conn.req_cookies["user_id"],
+          player: conn.req_cookies["user_id"]
         )
     end
   end

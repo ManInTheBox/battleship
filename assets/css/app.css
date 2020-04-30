@@ -60,10 +60,12 @@ td.rows-heading {
   display: none;
 }
 
+.alive {
+  background-color: #0000ff;
+}
 .hit {
   background-color: #ff000091;
 }
-
 .water {
   background-color: #d5d5fb63;
 }
