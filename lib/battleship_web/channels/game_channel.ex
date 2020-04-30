@@ -15,7 +15,7 @@ defmodule BattleshipWeb.GameChannel do
 
     game = Battleship.Game.find_by_id(game_id)
 
-    {grid, shoots_grid} =
+    {grid, opponent_grid} =
       if game[:player1]["id"] == user do
         {game[:player2]["my_grid"], game[:player1]["opponent_grid"]}
       else
@@ -23,20 +23,20 @@ defmodule BattleshipWeb.GameChannel do
       end
 
     case Battleship.Grid.fire_torpedo(grid, square) do
-      {:water, _, grid} ->
-        IO.inspect(grid, label: "water")
+      {:water, {{x, y}, :water}, grid} ->
+        broadcast!(socket, "fire_torpedo_water", %{"square" => "#{x}-#{y}", "user" => user})
 
-      {:hit, _, grid} ->
-        IO.inspect(grid, label: "hit")
+      {:hit, {{x, y}, :hit}, grid} ->
+        IO.inspect(grid, label: "Hit")
+        broadcast!(socket, "fire_torpedo_hit", %{"square" => "#{x}-#{y}", "user" => user})
 
-      {:sunk, _, grid} ->
-        IO.inspect(grid, label: "sunk")
+      {:sunk, ship, grid} ->
+        IO.inspect(ship, label: "Sunk")
 
       any ->
         IO.inspect(any, label: "ovo je any")
     end
 
-    # broadcast!(socket, "fire_torpedo", %{"poruka" => "ovo radi bre!"})
     {:noreply, socket}
   end
 end

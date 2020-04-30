@@ -53,9 +53,17 @@ td.rows-heading {
 }
 
 .disabled {
-  opacity: 0.3;
+  opacity: 0.4;
 }
 
 .hidden {
   display: none;
+}
+
+.hit {
+  background-color: #ff000091;
+}
+
+.water {
+  background-color: #d5d5fb63;
 }
