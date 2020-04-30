@@ -43,7 +43,7 @@ export function gameSocket() {
     if (payload.user === getUser()) {
       document.getElementById(`opponent_square_${payload.square}`).classList.add('hit');
     } else {
-      document.getElementById(`my_square_${payload.square}`).classList.add('disabled');
+      document.getElementById(`my_square_${payload.square}`).classList.add('hit');
     }
   });
 

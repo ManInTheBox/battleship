@@ -63,7 +63,10 @@ td.rows-heading {
 .alive {
   background-color: #0000ff;
 }
-.hit {
+#my-grid .hit {
+  background-color: #0000ffa6;
+}
+#opponent-grid .hit {
   background-color: #ff000091;
 }
 .water {
