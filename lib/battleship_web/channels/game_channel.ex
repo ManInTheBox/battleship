@@ -28,7 +28,7 @@ defmodule BattleshipWeb.GameChannel do
       {:water, {{x, y}, :water} = torpedo, opponent_grid} ->
         game
         |> update_in([player, "opponent_grid"], &[{torpedo} | &1])
-        |> update_in([get_other_player(player), "my_grid"], &[{torpedo} | &1])
+        |> update_in([get_other_player(player), "my_grid"], fn _ -> opponent_grid end)
         |> update_in([:player_to_shoot], fn _ -> other_user end)
         |> Battleship.Game.update()
 
@@ -41,7 +41,7 @@ defmodule BattleshipWeb.GameChannel do
       {:hit, {{x, y}, :hit} = torpedo, opponent_grid} ->
         game
         |> update_in([player, "opponent_grid"], &[{torpedo} | &1])
-        |> update_in([get_other_player(player), "my_grid"], &[{torpedo} | &1])
+        |> update_in([get_other_player(player), "my_grid"], fn _ -> opponent_grid end)
         |> Battleship.Game.update()
 
         broadcast!(socket, "fire_torpedo_hit", %{
@@ -51,7 +51,24 @@ defmodule BattleshipWeb.GameChannel do
         })
 
       {:sunk, ship, opponent_grid} ->
-        IO.inspect(ship, label: "Sunk")
+        game
+        |> update_in([player, "opponent_grid"], &[ship | &1])
+        |> update_in([get_other_player(player), "my_grid"], fn _ -> opponent_grid end)
+        |> Battleship.Game.update()
+
+        squares =
+          ship
+          |> Tuple.to_list()
+          |> Enum.map(fn {square, state} ->
+            [Enum.join(Tuple.to_list(square), "-"), state]
+          end)
+          |> Jason.encode!()
+
+        broadcast!(socket, "fire_torpedo_sunk", %{
+          "squares" => squares,
+          "user" => user,
+          "other_user" => other_user
+        })
 
       any ->
         IO.inspect(any, label: "ovo je any")

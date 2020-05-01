@@ -47,6 +47,20 @@ export function gameSocket() {
     }
   });
 
+  channel.on("fire_torpedo_sunk", payload => {
+    if (payload.user === getUser()) {
+      JSON.parse(payload.squares).forEach(([square]) => {
+        document.getElementById(`opponent_square_${square}`).classList.remove('alive', 'hit');
+        document.getElementById(`opponent_square_${square}`).classList.add('sunk');
+      });
+    } else {
+      JSON.parse(payload.squares).forEach(([square]) => {
+        document.getElementById(`my_square_${square}`).classList.remove('alive', 'hit');
+        document.getElementById(`my_square_${square}`).classList.add('sunk');
+      });
+    }
+  });
+
   channel.join();
 
   return channel;
