@@ -48,10 +48,15 @@ export function gameSocket() {
   });
 
   channel.on("fire_torpedo_sunk", payload => {
+    console.log(payload)
     if (payload.user === getUser()) {
       JSON.parse(payload.squares).forEach(([square]) => {
         document.getElementById(`opponent_square_${square}`).classList.remove('alive', 'hit');
         document.getElementById(`opponent_square_${square}`).classList.add('sunk');
+      });
+
+      JSON.parse(payload.water_squares).forEach(([square]) => {
+        document.getElementById(`opponent_square_${square}`)?.classList.add('water');
       });
     } else {
       JSON.parse(payload.squares).forEach(([square]) => {
@@ -59,6 +64,7 @@ export function gameSocket() {
         document.getElementById(`my_square_${square}`).classList.add('sunk');
       });
     }
+
   });
 
   channel.join();

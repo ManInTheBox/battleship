@@ -153,6 +153,6 @@ export function createOpponentGrid(channel) {
   }
 
   for (const square of JSON.parse(grid.dataset.squares)) {
-    document.getElementById(`opponent_square_${square[0]}`).classList.add(square[1]);
+    document.getElementById(`opponent_square_${square[0]}`)?.classList.add(square[1]);
   }
 }

@@ -51,10 +51,12 @@ defmodule BattleshipWeb.GameChannel do
         })
 
       {:sunk, ship, opponent_grid} ->
-        game
-        |> update_in([player, "opponent_grid"], &[ship | &1])
-        |> update_in([get_other_player(player), "my_grid"], fn _ -> opponent_grid end)
-        |> Battleship.Game.update()
+        game =
+          game
+          |> update_in([player, "opponent_grid"], &[ship | &1])
+          |> update_in([get_other_player(player), "my_grid"], fn _ -> opponent_grid end)
+
+        Battleship.Game.update(game)
 
         squares =
           ship
@@ -64,8 +66,61 @@ defmodule BattleshipWeb.GameChannel do
           end)
           |> Jason.encode!()
 
+        water_squares =
+          ship
+          |> Tuple.to_list()
+          |> Enum.map(fn {{x, y}, _state} ->
+            water_next_to_me? = fn {x1, y1} ->
+              !Enum.any?(Tuple.to_list(ship), fn {{x2, y2}, _state} ->
+                x1 == x2 && y1 == y2
+              end)
+            end
+
+            s = []
+
+            s =
+              if water_next_to_me?.({x + 1, y}),
+                do:
+                  [{{x + 1, y}, :water}, {{x + 1, y - 1}, :water}, {{x + 1, y + 1}, :water}] ++ s,
+                else: s
+
+            s =
+              if water_next_to_me?.({x - 1, y}),
+                do:
+                  [{{x - 1, y}, :water}, {{x - 1, y - 1}, :water}, {{x - 1, y + 1}, :water}] ++ s,
+                else: s
+
+            s =
+              if water_next_to_me?.({x, y - 1}),
+                do:
+                  [{{x, y - 1}, :water}, {{x - 1, y - 1}, :water}, {{x + 1, y - 1}, :water}] ++ s,
+                else: s
+
+            s =
+              if water_next_to_me?.({x, y + 1}),
+                do:
+                  [{{x, y + 1}, :water}, {{x - 1, y + 1}, :water}, {{x + 1, y + 1}, :water}] ++ s,
+                else: s
+          end)
+          |> List.flatten()
+          |> Enum.uniq()
+
+        game
+        |> update_in([player, "opponent_grid"], fn opponent_grid ->
+          Enum.map(water_squares, &{&1}) ++ opponent_grid
+        end)
+        |> Battleship.Game.update()
+
+        water_squares =
+          water_squares
+          |> Enum.map(fn {square, state} = torpedo ->
+            [Enum.join(Tuple.to_list(square), "-"), state]
+          end)
+          |> Jason.encode!()
+
         broadcast!(socket, "fire_torpedo_sunk", %{
           "squares" => squares,
+          "water_squares" => water_squares,
           "user" => user,
           "other_user" => other_user
         })
