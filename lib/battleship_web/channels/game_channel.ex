@@ -142,9 +142,6 @@ defmodule BattleshipWeb.GameChannel do
           "user" => user,
           "other_user" => other_user
         })
-
-      any ->
-        IO.inspect(any, label: "ovo je any")
     end
 
     {:noreply, socket}
