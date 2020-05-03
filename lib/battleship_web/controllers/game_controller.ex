@@ -40,7 +40,7 @@ defmodule BattleshipWeb.GameController do
 
         BattleshipWeb.Endpoint.broadcast("game:#{id}", "game_started", %{
           "message" => "The game has just started.",
-          "is_my_turn" => game[:player_to_shoot] != conn.req_cookies["user_id"]
+          "is_my_turn" => game.player_to_shoot != conn.req_cookies["user_id"]
         })
 
         conn = put_flash(conn, :success, "The game has just started.")
@@ -109,7 +109,7 @@ defmodule BattleshipWeb.GameController do
           my_squares: my_squares,
           opponent_squares: opponent_squares,
           status: status,
-          is_my_turn: game[:player_to_shoot] == conn.req_cookies["user_id"],
+          is_my_turn: game.player_to_shoot == conn.req_cookies["user_id"],
           player: conn.req_cookies["user_id"]
         )
     end
@@ -186,13 +186,13 @@ defmodule BattleshipWeb.GameController do
         end
 
       game ->
-        if get_in(game, [:player1, "id"]) == user do
-          my_grid = get_in(game, [:player1, "my_grid"])
-          opponent_grid = get_in(game, [:player1, "opponent_grid"])
+        if get_in(game.player_1, ["id"]) == user do
+          my_grid = get_in(game.player_1, ["my_grid"])
+          opponent_grid = get_in(game.player_1, ["opponent_grid"])
           {:ready, my_grid, opponent_grid, game}
         else
-          my_grid = get_in(game, [:player2, "my_grid"])
-          opponent_grid = get_in(game, [:player2, "opponent_grid"])
+          my_grid = get_in(game.player_2, ["my_grid"])
+          opponent_grid = get_in(game.player_2, ["opponent_grid"])
           {:ready, my_grid, opponent_grid, game}
         end
     end

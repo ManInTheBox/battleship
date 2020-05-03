@@ -1,6 +1,12 @@
 defmodule Battleship.Game do
   use GenServer
 
+  defstruct id: nil,
+            player_1: nil,
+            player_2: nil,
+            player_to_shoot: nil,
+            start_time: DateTime.utc_now()
+
   def create(id, players) do
     GenServer.start_link(__MODULE__, %{id: id, players: players}, name: via_tuple(id))
     id
@@ -17,7 +23,7 @@ defmodule Battleship.Game do
   end
 
   def update(game) do
-    GenServer.cast(via_tuple(game[:id]), {:update, game})
+    GenServer.cast(via_tuple(game.id), {:update, game})
   end
 
   @impl true
@@ -25,11 +31,10 @@ defmodule Battleship.Game do
     player1 = Enum.at(game.players, 0)
     player2 = Enum.at(game.players, 1)
 
-    game = %{
+    game = %Battleship.Game{
       id: game.id,
-      start_time: DateTime.utc_now(),
-      player1: %{"id" => player1["id"], "my_grid" => player1["grid"], "opponent_grid" => []},
-      player2: %{"id" => player2["id"], "my_grid" => player2["grid"], "opponent_grid" => []},
+      player_1: %{"id" => player1["id"], "my_grid" => player1["grid"], "opponent_grid" => []},
+      player_2: %{"id" => player2["id"], "my_grid" => player2["grid"], "opponent_grid" => []},
       player_to_shoot: Enum.random([player1["id"], player2["id"]])
     }
 

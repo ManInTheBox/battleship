@@ -16,20 +16,26 @@ defmodule BattleshipWeb.GameChannel do
     game = Battleship.Game.find_by_id(game_id)
 
     {player, opponent_grid, my_shooting_grid} =
-      if game[:player1]["id"] == user do
-        {:player1, game[:player2]["my_grid"], game[:player1]["opponent_grid"]}
+      if game.player_1["id"] == user do
+        {:player_1, game.player_2["my_grid"], game.player_1["opponent_grid"]}
       else
-        {:player2, game[:player1]["my_grid"], game[:player2]["opponent_grid"]}
+        {:player_2, game.player_1["my_grid"], game.player_2["opponent_grid"]}
       end
 
-    other_user = get_in(game, [get_other_player(player), "id"])
+    other_user = Map.get(game, get_other_player(player))["id"]
 
     case Battleship.Grid.fire_torpedo(opponent_grid, square) do
       {:water, {{x, y}, :water} = torpedo, opponent_grid} ->
         game
-        |> update_in([player, "opponent_grid"], &[{torpedo} | &1])
-        |> update_in([get_other_player(player), "my_grid"], fn _ -> opponent_grid end)
-        |> update_in([:player_to_shoot], fn _ -> other_user end)
+        |> Map.update!(player, fn _ ->
+          Map.update!(Map.get(game, player), "opponent_grid", &[{torpedo} | &1])
+        end)
+        |> Map.update!(get_other_player(player), fn _ ->
+          Map.update!(Map.get(game, get_other_player(player)), "my_grid", fn _ ->
+            opponent_grid
+          end)
+        end)
+        |> Map.update!(:player_to_shoot, fn _ -> other_user end)
         |> Battleship.Game.update()
 
         broadcast!(socket, "fire_torpedo_water", %{
@@ -40,8 +46,14 @@ defmodule BattleshipWeb.GameChannel do
 
       {:hit, {{x, y}, :hit} = torpedo, opponent_grid} ->
         game
-        |> update_in([player, "opponent_grid"], &[{torpedo} | &1])
-        |> update_in([get_other_player(player), "my_grid"], fn _ -> opponent_grid end)
+        |> Map.update!(player, fn _ ->
+          Map.update!(Map.get(game, player), "opponent_grid", &[{torpedo} | &1])
+        end)
+        |> Map.update!(get_other_player(player), fn _ ->
+          Map.update!(Map.get(game, get_other_player(player)), "my_grid", fn _ ->
+            opponent_grid
+          end)
+        end)
         |> Battleship.Game.update()
 
         broadcast!(socket, "fire_torpedo_hit", %{
@@ -51,12 +63,16 @@ defmodule BattleshipWeb.GameChannel do
         })
 
       {:sunk, ship, opponent_grid} ->
-        game =
-          game
-          |> update_in([player, "opponent_grid"], &[ship | &1])
-          |> update_in([get_other_player(player), "my_grid"], fn _ -> opponent_grid end)
-
-        Battleship.Game.update(game)
+        game
+        |> Map.update!(player, fn _ ->
+          Map.update!(Map.get(game, player), "opponent_grid", &[ship | &1])
+        end)
+        |> Map.update!(get_other_player(player), fn _ ->
+          Map.update!(Map.get(game, get_other_player(player)), "my_grid", fn _ ->
+            opponent_grid
+          end)
+        end)
+        |> Battleship.Game.update()
 
         squares =
           ship
@@ -106,8 +122,10 @@ defmodule BattleshipWeb.GameChannel do
           |> Enum.uniq()
 
         game
-        |> update_in([player, "opponent_grid"], fn opponent_grid ->
-          Enum.map(water_squares, &{&1}) ++ opponent_grid
+        |> Map.update!(player, fn _ ->
+          Map.update!(Map.get(game, player), "opponent_grid", fn opponent_grid ->
+            Enum.map(water_squares, &{&1}) ++ opponent_grid
+          end)
         end)
         |> Battleship.Game.update()
 
@@ -133,6 +151,6 @@ defmodule BattleshipWeb.GameChannel do
   end
 
   defp get_other_player(player) do
-    if player == :player1, do: :player2, else: :player1
+    if player == :player_1, do: :player_2, else: :player_1
   end
 end
