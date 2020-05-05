@@ -18,34 +18,44 @@ defmodule BattleshipWeb.GameController do
   def create(conn, params) do
     user = conn.req_cookies["user_id"]
 
-    grid =
+    ships =
       params["ships"]
       |> create_squares()
       |> create_ships()
-      |> create_grid()
 
-    case Battleship.GameSeek.find_matching_seek(user) do
-      nil ->
-        id = Battleship.GameSeek.create(user, grid)
-        redirect(conn, to: Routes.game_path(conn, :show, id))
+    case create_grid(ships) do
+      {:error, :ships_arranged, type} ->
+        conn = put_flash(conn, :error, "You've already arranged all #{type} ships.")
+        render(conn, "index.html")
 
-      %{id: id, from: opponent_user, grid: opponent_grid} ->
-        players = [
-          %{"id" => user, "grid" => grid},
-          %{"id" => opponent_user, "grid" => opponent_grid}
-        ]
+      {:error, _, _} ->
+        conn = put_flash(conn, :error, "Ships must not touch or overlap with each other.")
+        render(conn, "index.html")
 
-        Battleship.Game.create(id, players)
-        game = Battleship.Game.find_by_id(id)
+      grid ->
+        case Battleship.GameSeek.find_matching_seek(user) do
+          nil ->
+            id = Battleship.GameSeek.create(user, grid)
+            redirect(conn, to: Routes.game_path(conn, :show, id))
 
-        BattleshipWeb.Endpoint.broadcast("game:#{id}", "game_started", %{
-          "message" => "The game has just started.",
-          "is_my_turn" => game.player_to_shoot != conn.req_cookies["user_id"]
-        })
+          %{id: id, from: opponent_user, grid: opponent_grid} ->
+            players = [
+              %{"id" => user, "grid" => grid},
+              %{"id" => opponent_user, "grid" => opponent_grid}
+            ]
 
-        conn = put_flash(conn, :success, "The game has just started.")
+            Battleship.Game.create(id, players)
+            game = Battleship.Game.find_by_id(id)
 
-        redirect(conn, to: Routes.game_path(conn, :show, id))
+            BattleshipWeb.Endpoint.broadcast("game:#{id}", "game_started", %{
+              "message" => "The game has just started.",
+              "is_my_turn" => game.player_to_shoot != conn.req_cookies["user_id"]
+            })
+
+            conn = put_flash(conn, :success, "The game has just started.")
+
+            redirect(conn, to: Routes.game_path(conn, :show, id))
+        end
     end
   end
 
