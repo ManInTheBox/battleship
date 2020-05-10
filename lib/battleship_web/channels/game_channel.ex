@@ -63,17 +63,6 @@ defmodule BattleshipWeb.GameChannel do
         })
 
       {:sunk, ship, opponent_grid} ->
-        game
-        |> Map.update!(player, fn _ ->
-          Map.update!(Map.get(game, player), "opponent_grid", &[ship | &1])
-        end)
-        |> Map.update!(get_other_player(player), fn _ ->
-          Map.update!(Map.get(game, get_other_player(player)), "my_grid", fn _ ->
-            opponent_grid
-          end)
-        end)
-        |> Battleship.Game.update()
-
         squares =
           ship
           |> Tuple.to_list()
@@ -123,8 +112,14 @@ defmodule BattleshipWeb.GameChannel do
 
         game
         |> Map.update!(player, fn _ ->
-          Map.update!(Map.get(game, player), "opponent_grid", fn opponent_grid ->
+          Map.update!(Map.get(game, player), "opponent_grid", &[ship | &1])
+          |> Map.update!("opponent_grid", fn opponent_grid ->
             Enum.map(water_squares, &{&1}) ++ opponent_grid
+          end)
+        end)
+        |> Map.update!(get_other_player(player), fn _ ->
+          Map.update!(Map.get(game, get_other_player(player)), "my_grid", fn _ ->
+            opponent_grid
           end)
         end)
         |> Battleship.Game.update()
