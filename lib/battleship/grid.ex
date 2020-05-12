@@ -4,6 +4,8 @@ defmodule Battleship.Grid do
   @ship_count %{submarine: 4, destroyer: 3, cruiser: 2, battleship: 1}
 
   def dimensions, do: @size
+  def ship_count, do: @ship_count
+
   def new, do: []
 
   def add_ship(grid, ship) do
@@ -100,7 +102,7 @@ defmodule Battleship.Grid do
     end)
   end
 
-  defp ship_type(ship) when is_tuple(ship) do
+  def ship_type(ship) when is_tuple(ship) do
     case tuple_size(ship) do
       1 ->
         :submarine

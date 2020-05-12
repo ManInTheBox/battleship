@@ -48,7 +48,6 @@ export function gameSocket() {
   });
 
   channel.on("fire_torpedo_sunk", payload => {
-    console.log(payload)
     if (payload.user === getUser()) {
       JSON.parse(payload.squares).forEach(([square]) => {
         document.getElementById(`opponent_square_${square}`).classList.remove('alive', 'hit');
@@ -64,7 +63,16 @@ export function gameSocket() {
         document.getElementById(`my_square_${square}`).classList.add('sunk');
       });
     }
+  });
 
+  channel.on("game_over", ({ winner, loser }) => {
+    if (winner == getUser()) {
+      document.querySelector('.alert-success').innerHTML = 'You won this game!';
+      document.querySelector('.alert-success').classList.add('visible');
+    } else if (loser == getUser()) {
+      document.querySelector('.alert-warning').innerHTML = 'You lost. Try again!';
+      document.querySelector('.alert-warning').classList.add('visible');
+    }
   });
 
   channel.join();

@@ -124,6 +124,8 @@ defmodule BattleshipWeb.GameChannel do
         end)
         |> Battleship.Game.update()
 
+        Battleship.Game.sunk(game, ship)
+
         water_squares =
           water_squares
           |> Enum.map(fn {square, state} = torpedo ->
@@ -137,6 +139,9 @@ defmodule BattleshipWeb.GameChannel do
           "user" => user,
           "other_user" => other_user
         })
+
+        game = Battleship.Game.find_by_id(game_id)
+        if Battleship.Game.game_over?(game), do: broadcast!(socket, "game_over", %{"winner" => user, "loser" => other_user})
     end
 
     {:noreply, socket}

@@ -95,6 +95,8 @@ defmodule BattleshipWeb.GameController do
         )
 
       {status, my_grid, opponent_grid, game} ->
+        conn = if Battleship.Game.game_over?(game), do: put_flash(conn, :error, "This game is over."), else: conn
+
         my_squares =
           my_grid
           |> Enum.map(fn ship ->
