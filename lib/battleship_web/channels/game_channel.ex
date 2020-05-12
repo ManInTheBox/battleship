@@ -141,7 +141,10 @@ defmodule BattleshipWeb.GameChannel do
         })
 
         game = Battleship.Game.find_by_id(game_id)
-        if Battleship.Game.game_over?(game), do: broadcast!(socket, "game_over", %{"winner" => user, "loser" => other_user})
+
+        if Battleship.Game.game_over?(game) do
+          broadcast!(socket, "game_over", %{"winner" => user, "loser" => other_user})
+        end
     end
 
     {:noreply, socket}

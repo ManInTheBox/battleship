@@ -67,11 +67,13 @@ export function gameSocket() {
 
   channel.on("game_over", ({ winner, loser }) => {
     if (winner == getUser()) {
-      document.querySelector('.alert-success').innerHTML = 'You won this game!';
+      document.querySelector('.alert-success').classList.remove('hidden');
       document.querySelector('.alert-success').classList.add('visible');
+      document.querySelector('.alert-success').innerHTML = 'You won this game!';
     } else if (loser == getUser()) {
-      document.querySelector('.alert-warning').innerHTML = 'You lost. Try again!';
+      document.querySelector('.alert-warning').classList.remove('hidden');
       document.querySelector('.alert-warning').classList.add('visible');
+      document.querySelector('.alert-warning').innerHTML = 'You lost. Try again!';
     }
   });
 
