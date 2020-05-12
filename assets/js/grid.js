@@ -138,6 +138,10 @@ export function createOpponentGrid(channel) {
           return;
         }
 
+        if (event.target.classList.contains('water') || event.target.classList.contains('hit') || event.target.classList.contains('sunk')) {
+          return;
+        }
+
         const user = document.cookie.replace('user_id=', '');
 
         channel.push('fire_torpedo', {game_id: gameId, square: square, user: user});
