@@ -1,20 +1,8 @@
 # Battleship
 
-To start your Phoenix server:
+This is my very first project I've done in Elixir. It's incomplete, very unstable and full of bugs. But it works :)
+Do not use this in production. It's also not very useful for folks new to Elixir, because the code is very poor, since I'm Elixir beginner as well! Onward and upward!
 
-  * Install dependencies with `mix deps.get`
-  * Create and migrate your database with `mix ecto.setup`
-  * Install Node.js dependencies with `cd assets && npm install`
-  * Start Phoenix endpoint with `mix phx.server`
+The game looks like this:
 
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
-
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
-
-## Learn more
-
-  * Official website: https://www.phoenixframework.org/
-  * Guides: https://hexdocs.pm/phoenix/overview.html
-  * Docs: https://hexdocs.pm/phoenix
-  * Forum: https://elixirforum.com/c/phoenix-forum
-  * Source: https://github.com/phoenixframework/phoenix
+![battleship game](http://snappyimages.nextwavesrl.netdna-cdn.com/img/bd36ba864c6ec0a0d7834ea19889715f.png)
