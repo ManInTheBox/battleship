@@ -8,8 +8,6 @@ defmodule Battleship.Application do
   def start(_type, _args) do
     # List all child processes to be supervised
     children = [
-      # Start the Ecto repository
-      Battleship.Repo,
       # Start the endpoint when the application starts
       BattleshipWeb.Endpoint,
       {Registry, keys: :unique, name: Battleship.Game},

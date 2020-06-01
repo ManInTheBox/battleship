@@ -7,9 +7,6 @@
 # General application configuration
 use Mix.Config
 
-config :battleship,
-  ecto_repos: [Battleship.Repo]
-
 # Configures the endpoint
 config :battleship, BattleshipWeb.Endpoint,
   url: [host: "localhost"],
